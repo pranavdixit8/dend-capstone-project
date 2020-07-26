@@ -6,7 +6,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format, to_timestamp,to_date
 from pyspark.sql.types import TimestampType, DateType, IntegerType, StringType, DoubleType
-# import com.github.saurfang.sas.spark
 
 
 
@@ -26,9 +25,7 @@ def create_spark_session():
         .config("spark.jars.packages","saurfang:spark-sas7bdat:2.0.0-s_2.11")\
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
         .enableHiveSupport().getOrCreate()
-        # .getOrCreate()
-        # .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
-        # .getOrCreate()
+        
     return spark
 
 
@@ -110,16 +107,13 @@ def process_immigration_data(spark, input_data, output_data, port_to_city_dict):
         output_data: location of output folder
 
     """
+
     # get filepath to immigration data file
     # immigration_data = os.path.join(input_data,'18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat')
-
-    
     # read immigration data file into dataframe
-
     # df =spark.read.format('com.github.saurfang.sas.spark').load(immigration_data, forceLowercaseNames=True, inferLong=True)
 
 
-    # df=spark.read.parquet("sas_data")
     df=spark.read.parquet(input_data)
 
 
@@ -179,11 +173,8 @@ def process_port_data(spark, input_data, output_data, city_to_port_dict):
 
     """
  
-    # get filepath to port data file
 
-    # port_data = "GlobalLandTemperaturesByCity.csv"
-
-    # read log data file
+    # read port data file
     df = spark.read.csv(input_data, header=True)
 
     #add column i94port for port correspnding to the city Column
@@ -218,7 +209,7 @@ def process_port_data(spark, input_data, output_data, city_to_port_dict):
 
     """)
 
-    # write time table to parquet files partitioned by year and month
+    # write ports dataframe to parquet files partitioned by year and month
     df.write.mode("overwrite").json(os.path.join(output_data,"ports"))
 
   
@@ -227,10 +218,12 @@ def process_port_data(spark, input_data, output_data, city_to_port_dict):
 def main():
 
     spark = create_spark_session()
+
+    print(os.getcwd())
   
-    input_immigration_data = "/home/pranav/Desktop/data/projects/dend-capstone-project/sas_data"
-    input_port_data = "/home/pranav/Desktop/data/projects/dend-capstone-project/GlobalLandTemperaturesByCity.csv"
-    input_labels_data = '/home/pranav/Desktop/data/projects/dend-capstone-project/I94_SAS_Labels_Descriptions.SAS'
+    input_immigration_data = os.path.join(os.path.dirname(os.path.realpath(__file__)), "sas_data")
+    input_port_data = os.path.join(os.path.dirname(os.path.realpath(__file__)), "GlobalLandTemperaturesByCity.csv")
+    input_labels_data = os.path.join(os.path.dirname(os.path.realpath(__file__)), "I94_SAS_Labels_Descriptions.SAS")
     output_data = "s3a://dend-2020-capstone/"
     
   
