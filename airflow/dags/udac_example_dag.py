@@ -4,14 +4,10 @@ from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators import BashOperator
-from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
-                                LoadDimensionOperator, DataQualityOperator)
+from airflow.operators import (StageToRedshiftOperator, DataQualityOperator)
 from helpers import SqlQueries
-from helpers import SparkProcess
 
-    
 
-sparkProcess = SparkProcess()
 
 star_schema_tables = ["immigration_events", "ports"]
 
