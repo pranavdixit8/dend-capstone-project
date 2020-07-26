@@ -32,14 +32,14 @@ dag = DAG('udac_example_dag',
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
 
-
+#task to run the etl.py to preprocess immigration and port data
 process_files = BashOperator(
     task_id="process_files",
     bash_command = 'python /home/pranav/Desktop/data/projects/dend-capstone-project/etl.py',
     dag = dag)
 
 
-
+#task to move immigration data to redshift
 load_immigration_events_to_redshift = StageToRedshiftOperator(
     task_id='load_immigration_events',
     dag=dag,
@@ -52,7 +52,7 @@ load_immigration_events_to_redshift = StageToRedshiftOperator(
     create_table_sql = SqlQueries.create_table_immigration_events,
     format_mode = "json 'auto' "
 )
-
+#task to move port data to redshift
 laod_ports_to_redshift = StageToRedshiftOperator(
     task_id='load_ports',
     dag=dag,
@@ -66,7 +66,7 @@ laod_ports_to_redshift = StageToRedshiftOperator(
 )
 
 
-
+#runs quality check on immigration events and ports table
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
     dag=dag,
@@ -78,14 +78,11 @@ end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 start_operator >> process_files
 
-
 process_files >> load_immigration_events_to_redshift
-
 process_files >> laod_ports_to_redshift
 
 
 load_immigration_events_to_redshift >> run_quality_checks
-
 laod_ports_to_redshift >> run_quality_checks
 
 

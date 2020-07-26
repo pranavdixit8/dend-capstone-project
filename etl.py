@@ -113,7 +113,7 @@ def process_immigration_data(spark, input_data, output_data, port_to_city_dict):
     # read immigration data file into dataframe
     # df =spark.read.format('com.github.saurfang.sas.spark').load(immigration_data, forceLowercaseNames=True, inferLong=True)
 
-
+    # read immigration data file into dataframe
     df=spark.read.parquet(input_data)
 
 
@@ -209,7 +209,7 @@ def process_port_data(spark, input_data, output_data, city_to_port_dict):
 
     """)
 
-    # write ports dataframe to parquet files partitioned by year and month
+    # write ports dataframe to json files partitioned by year and month
     df.write.mode("overwrite").json(os.path.join(output_data,"ports"))
 
   
