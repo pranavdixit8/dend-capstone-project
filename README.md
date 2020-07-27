@@ -49,6 +49,10 @@ $ pip install -r requirements.txt
 
 # Design
 
+### Data Design
+
+Our model consists of 2 tables: immigration events and ports. I have chosen to have 2 tables for my model as we have 2 data sources for the tables. This helps in better troubleshooting if we have issues with one of the data sources. This approach also allows for parallelizing loading of data into tables. Parallelizing here is not a big gain here, given the ports table is not a large table. However, keeping the table seperate also makes the solution more intuitive with different entities intracting with each other and if we want to extend the entities in the future we can do that separately without affecting the other entity.
+
 ### Data pipeline
 
 We preprocesss the data for immigration events and ports using Spark and upload the processed data to AWS S3. The data from S3 is loaded into AWS Redshift and we run quality checks on the data.
@@ -71,6 +75,14 @@ We preprocesss the data for immigration events and ports using Spark and upload 
  > >Primary key: i94port
 
 ![](ER_diagram.png)
+
+### Data Dictionary
+
+ - **immigration_events**:
+    ![](immigration_events_dd.png)
+ - **ports**:
+    ![](ports_dd.png)
+    
 
 # Steps for the project:
 1. **Preprocessing Using Spark**: As we are preprocessing more than million records in the abovementioned data sources, we choose Spark to preprocess the data. We preprocess the data and load the processed data into S3. We choose S3 as the storage is AWS managed and is highly scalable with  high durability and availablity. We will be using Redshift as our database technology, hence S3 is the best choice due the above reasons and due to high compatibility between AWS services. The file etl.py handles the preprocessing of the data using Spark.
