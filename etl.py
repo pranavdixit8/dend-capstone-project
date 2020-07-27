@@ -8,7 +8,7 @@ from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, dat
 from pyspark.sql.types import TimestampType, DateType, IntegerType, StringType, DoubleType
 
 
-
+#Reading the aws credentials to write data intp S3
 config = configparser.ConfigParser()
 config.read('/home/pranav/Desktop/data/projects/dend-capstone-project/dl.cfg')
 os.environ['AWS_ACCESS_KEY_ID']=config['DEFAULT']['AWS_ACCESS_KEY_ID']
@@ -209,6 +209,8 @@ def process_port_data(spark, input_data, output_data, city_to_port_dict):
 
     """)
 
+    df.show(20)
+
     # write ports dataframe to json files partitioned by year and month
     df.write.mode("overwrite").json(os.path.join(output_data,"ports"))
 
@@ -217,10 +219,11 @@ def process_port_data(spark, input_data, output_data, city_to_port_dict):
 
 def main():
 
+    #create spark session
     spark = create_spark_session()
 
     print(os.getcwd())
-  
+
     input_immigration_data = os.path.join(os.path.dirname(os.path.realpath(__file__)), "sas_data")
     input_port_data = os.path.join(os.path.dirname(os.path.realpath(__file__)), "GlobalLandTemperaturesByCity.csv")
     input_labels_data = os.path.join(os.path.dirname(os.path.realpath(__file__)), "I94_SAS_Labels_Descriptions.SAS")
@@ -230,7 +233,7 @@ def main():
     port_to_city_dict = get_port_to_city_dict(input_labels_data)
     city_to_port_dict = get_city_to_port_dict(input_labels_data)
 
-    
+    #process immigration events and ports data
     process_immigration_data(spark, input_immigration_data, output_data, port_to_city_dict)    
     process_port_data(spark, input_port_data, output_data, city_to_port_dict)
 
