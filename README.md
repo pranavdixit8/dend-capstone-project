@@ -72,6 +72,17 @@ We preprocesss the data for immigration events and ports using Spark and upload 
 
 ![](ER_diagram.png)
 
+# Steps for the project:
+1. **Preprocessing Using Spark**: As we are preprocessing more than million records in the abovementioned data sources, we choose Spark to preprocess the data. We preprocess the data and load the processed data into S3. We choose S3 as the storage is AWS managed and is highly scalable with  high durability and availablity. We will be using Redshift as our database technology, hence S3 is the best choice due the above reasons and due to high compatibility between AWS services. The file etl.py handles the preprocessing of the data using Spark.
+
+  - *Preprocessing Immigration events data*: We select the columns needed as per the schema mentioned above. We change the value for visa category from a number to a string value. We convert the arrival date and departure date column into date format from a number(representing number of days since 1960). We calculate the duration in days using arrival date and departure date. We rename and change the format of columns as required. In the end we filter out rows as per the i94port in the file I94_SAS_Labels_Descriptions.SAS.
+
+  - *Preprocessing ports data*: We select the columns from the data as per the schema mentioned above and change the format of columns as required. We use the I94_SAS_Labels_Descriptions.SAS file to find the valid ports for our analysis and filter out the rows with valid ports accordingly. We also filter out the rows with average temperature as 0, as our focus of analysis is the correlation between temperature at a place and the immigration events. Finally, we take the latest information around the ports to do our anaylsis.
+
+2. **Loading data into Redshift**: We use redshift as our database technology due auto-scaling functionality and the database is cluster-based with high performance. We load the data into Redshift from S3 using the Copy command with ease, due to high compatibility between AWS services.
+3. **Data quality checks** : We perform data quality checks on the data to make sure we loaded the data as expected.
+
+
 
 # Use cases
 
