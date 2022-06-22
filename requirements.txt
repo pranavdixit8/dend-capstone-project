@@ -61,7 +61,7 @@ marshmallow-enum==1.5.1
 marshmallow-sqlalchemy==0.23.1
 msgpack==0.6.2
 natsort==7.0.1
-numpy==1.19.0
+numpy==1.22.0
 packaging==20.3
 pandas==1.0.5
 pendulum==1.4.4
